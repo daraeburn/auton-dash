@@ -1,9 +1,12 @@
 <?php
+$page = $_SERVER['PHP_SELF'];
 
 $doneString = 'Closed';
 $newString = 'New';
 $openString = 'Open';
 $waitingConfirmationString = "'Ready%20for%20Test'";
+
+$pageRefreshSeconds = 120;
 
 error_reporting(E_ALL);
 session_start();

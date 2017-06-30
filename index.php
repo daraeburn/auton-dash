@@ -19,7 +19,7 @@ if ($almClient) {
     $completeDefects = qcGetDefectsByTagAndState($almClient,"GLA_auto",$doneString);
     $completeCount = count($completeDefects);
 }
-head();
+head($pageRefreshSeconds, $page);
 drawTitle();
 drawCountBoxes($todoCount, $inProgressCount, $waitingOnDevCount, $completeCount);
 qcDefectsTable($notClosedDefects);
