@@ -14,12 +14,15 @@ if ($almClient) {
     $inProgressDefects = qcGetDefectsByTagAndState($almClient,'GLA_auto','Open');
     $inProgressCount = count($inProgressDefects);
 
-    $waitingOnDevDefects = qcGetDefectsByTagAndState($almClient,"GLA_auto",urlencode("Ready for Test"));
+    $waitingOnDevDefects = qcGetDefectsByTagAndState($almClient,"GLA_auto","'Ready%20for%20Test'");
     $waitingOnDevCount = count($waitingOnDevDefects);
+
+    $completeDefects = qcGetDefectsByTagAndState($almClient,"GLA_auto","Closed");
+    $completeCount = count($completeDefects);
 }
 head();
 drawTitle();
-drawCountBoxes($todoCount, $inProgressCount, $waitingOnDevCount);
+drawCountBoxes($todoCount, $inProgressCount, $waitingOnDevCount, $completeCount);
 qcDefectsTable($notClosedDefects);
 qcLogout($almClient);
 drawFooter();

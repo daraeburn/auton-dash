@@ -1,5 +1,5 @@
 <?php
-function drawCountBoxes($todoCount, $inProgressCount, $waitingOnDevCount) {
+function drawCountBoxes($todoCount, $inProgressCount, $waitingOnDevCount, $complete) {
 echo '<div class="container">
     <!--Row with three equal columns-->
     <div class="row">
@@ -20,7 +20,7 @@ echo '<div class="container">
         </div>
         <div class="col-md-3">
             <div class="panel panel-default">
-                <div class="panel-body"><h2>Done</h2></div>
+                <div class="panel-body"><h2>Done</h2><h2>'.$complete.'</h2></div>
             </div>
         </div>
 
