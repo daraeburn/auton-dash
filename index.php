@@ -19,25 +19,8 @@
 
         $almClient = qcLogin($connectionParams);
         if ($almClient) {
-            $defects = qcGetDefects($almClient);
-
-            // draw table now
-            echo "<table class='table table-striped'>
-            <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>State</th>
-            <th>Assign To</th>
-            </tr>";
-            foreach ($defects as $defect) {
-                echo "<tr>";
-                echo "<td>" . $defect->id . "</td>";
-                echo "<td>" . $defect->name . "</td>";
-                echo "<td>" . $defect->getParameter('user-23') . "</td>";
-                echo "<td>" . $defect->getParameter('user-02') . "</td>";
-            echo "</tr>";
-            }
-            echo "</table>";
+            $defects = qcGetDefectsByTag($almClient,'GLA_auto');
+            qcDefectsTable($defects);
         }
         else {
             echo "Not Authenticated - sorry.";
