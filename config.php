@@ -1,4 +1,10 @@
 <?php
+
+$doneString = 'Closed';
+$newString = 'New';
+$openString = 'Open';
+$waitingConfirmationString = "'Ready%20for%20Test'";
+
 error_reporting(E_ALL);
 session_start();
 require_once __DIR__ . '/../vendor/autoload.php';
