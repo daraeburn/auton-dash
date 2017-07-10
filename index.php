@@ -1,4 +1,5 @@
 <?php
+
 require 'qc.php';
 require 'ui.php';
 
@@ -16,12 +17,12 @@ if ($almClient) {
     $waitingOnDevDefects = qcGetDefectsByTagAndState($almClient,"GLA_auto",$waitingConfirmationString);
     $waitingOnDevCount = count($waitingOnDevDefects);
 
-    $completeDefects = qcGetDefectsByTagAndState($almClient,"GLA_auto",$doneString);
-    $completeCount = count($completeDefects);
+    $completeDefectsThisWeek = qcDoneDefectsThisWeekByTag($almClient,"GLA_auto", $doneString);
+    $completeThisWeekCount = count($completeDefectsThisWeek);
 }
 head($pageRefreshSeconds, $page);
 drawTitle();
-drawCountBoxes($todoCount, $inProgressCount, $waitingOnDevCount, $completeCount);
+drawCountBoxes($todoCount, $inProgressCount, $waitingOnDevCount, $completeThisWeekCount);
 qcDefectsTable($notClosedDefects);
 qcLogout($almClient);
 drawFooter();

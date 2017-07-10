@@ -1,26 +1,30 @@
 <?php
-function drawCountBoxes($todoCount, $inProgressCount, $waitingOnDevCount, $complete) {
+function drawCountBoxes($todoCount, $inProgressCount, $waitingOnDevCount, $completeThisWeekCount) {
 echo '<div class="container">
     <!--Row with three equal columns-->
     <div class="row">
         <div class="col-md-3">
-            <div class="panel panel-default">
-                <div class="panel-body"><h2>ToDo</h2><h2>'.$todoCount.'</div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">ToDo</div>
+                <div class="panel-body">'.$todoCount.'</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="panel panel-default">
-                <div class="panel-body"><h2>In Progress</h2><h2>'.$inProgressCount.'</h2></div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">In Progress</div>
+                <div class="panel-body">'.$inProgressCount.'</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="panel panel-default">
-                <div class="panel-body"><h2>With reporter</h2><h2>'.$waitingOnDevCount.'</h2></div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">With Reporter</div>
+                <div class="panel-body">'.$waitingOnDevCount.'</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="panel panel-default">
-                <div class="panel-body"><h2>Done</h2><h2>'.$complete.'</h2></div>
+            <div class="panel panel-success">
+                <div class="panel-heading">CLOSED this week</div>
+                <div class="panel-body">'.$completeThisWeekCount.'</div>
             </div>
         </div>
 

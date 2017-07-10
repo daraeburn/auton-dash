@@ -32,6 +32,15 @@ function qcGetDefectsByTagAndState($almClient, $tag, $state) {
     return $defects;
 }
 
+function qcDoneDefectsThisWeekByTag($almClient, $tag, $doneString) {
+    $defects = $almClient->getManager()->getBy(AlmEntityManager::ENTITY_TYPE_DEFECT, array(
+        'user-89' => $tag,
+        'user-23' => $doneString,
+        'user-24' => ">=".date('Y-m-d', strtotime('-7 days')),
+        ));
+    return $defects;
+}
+
 function qcLogout($almClient) {
     $almClient->getAuthenticator()->logout();
 }
