@@ -5,6 +5,42 @@ require 'config.php';
 use StepanSib\AlmClient\AlmClient;
 use StepanSib\AlmClient\AlmEntityManager;
 
+class DefectCollection{
+    public $collectionTitle;
+    public $collectionLink;
+    public $defects;
+
+    public function __construct($collectionTitle, $collectionLink, $defects) {
+        $this->title = $collectionTitle;
+        $this->link = $collectionLink;
+        $this->defects = $defects;
+    }
+
+    public function getHTML() {
+        $html = "<table class='table table-striped'>
+        <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>State</th>
+        <th>Assign To</th>
+        </tr>";
+        foreach ($this->defects as $defect) {
+            $html += "<tr>";
+            $html += "<td>" . $defect->id . "</td>";
+            $html += "<td>" . $defect->name . "</td>";
+            $html += "<td>" . $defect->getParameter('user-23') . "</td>";
+            $html += "<td>" . $defect->getParameter('user-02') . "</td>";
+        $html += "</tr>";
+        }
+        $html += "</table>";
+        return $html;
+    }
+
+    public function getCount() {
+        return count($this->defects);
+    }
+}
+
 function qcLogin($connectionParams) {
     $almClient = new AlmClient($connectionParams);
 

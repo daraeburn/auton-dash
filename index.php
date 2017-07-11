@@ -3,27 +3,51 @@
 require 'qc.php';
 require 'ui.php';
 
+ if (isset($_GET['type'])) {
+        $type = $_GET['type'];
+    }else{
+        $type = "";
+    }
 
 $almClient = qcLogin($connectionParams);
 if ($almClient) {
-    $notClosedDefects = qcGetDefectsByTagAndState($almClient,'GLA_auto','<>'.$doneString);
+    $notClosedCollection = new DefectCollection("Not closed", page.'?type="NOTCLOSED"',
+        qcGetDefectsByTagAndState($almClient,'GLA_auto','<>'.doneString));
+    
+    $backlogCollection = new DefectCollection("Backlog",page.'?type="BACKLOG"',
+        qcGetDefectsByTagAndState($almClient,'GLA_auto',newString));
 
-    $todoDefects = qcGetDefectsByTagAndState($almClient,'GLA_auto',$newString);
-    $todoCount = count($todoDefects);
+    $inProgressCollection= new DefectCollection("In Progress", page.'?type="INPROGRESS"',
+        qcGetDefectsByTagAndState($almClient,'GLA_auto',openString));
 
-    $inProgressDefects = qcGetDefectsByTagAndState($almClient,'GLA_auto',$openString);
-    $inProgressCount = count($inProgressDefects);
+    $waitingOnDevCollection = new DefectCollection("With Reporter", page.'?type="WITHREPORTER"',
+        qcGetDefectsByTagAndState($almClient,"GLA_auto",waitingConfirmationString));
 
-    $waitingOnDevDefects = qcGetDefectsByTagAndState($almClient,"GLA_auto",$waitingConfirmationString);
-    $waitingOnDevCount = count($waitingOnDevDefects);
+    $closedThisWeekCollection = new DefectCollection("CLOSED this week", page.'?type="CLOSEDTHISWEEK"',
+        qcDoneDefectsThisWeekByTag($almClient,"GLA_auto", doneString));
 
-    $completeDefectsThisWeek = qcDoneDefectsThisWeekByTag($almClient,"GLA_auto", $doneString);
-    $completeThisWeekCount = count($completeDefectsThisWeek);
+    switch ($type) {
+        case "CLOSEDTHISWEEK":
+            $defectsToDisplay = $closedThisWeekCollection->defects;
+            break;
+        case "BACKLOG":
+            $defectsToDisplay = $backlogCollection->defects;
+            break;
+        case "INPROGRESS":
+            $defectsToDisplay = $inProgressCollection->defects;
+            break;
+        case "WITHREPORTER":
+            $defectsToDisplay = $waitingOnDevCollection->defects;
+            break;
+        default:
+            $defectsToDisplay = $notClosedCollection->defects;
+    }
 }
-head($pageRefreshSeconds, $page);
+head(pageRefreshSeconds, page);
 drawTitle();
-drawCountBoxes($todoCount, $inProgressCount, $waitingOnDevCount, $completeThisWeekCount);
-qcDefectsTable($notClosedDefects);
+drawCountBoxes($backlogCollection->getCount(), $inProgressCollection->getCount(),
+    $waitingOnDevCollection->getCount(), $closedThisWeekCollection->getCount());
+qcDefectsTable($defectsToDisplay);
 qcLogout($almClient);
 drawFooter();
 ?>

@@ -3,13 +3,12 @@ error_reporting(E_ALL);
 session_start();
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$page = $_SERVER['PHP_SELF'];
-
-$doneString = 'Closed';
-$newString = 'New';
-$openString = 'Open';
-$waitingConfirmationString = "'Ready%20for%20Test'";
-$pageRefreshSeconds = 120;
+define ("page", $_SERVER['PHP_SELF']);
+define ("doneString", 'Closed');
+define ("newString", "New");
+define ("openString", "Open");
+define ("waitingConfirmationString", "'Ready%20for%20Test'");
+define ("pageRefreshSeconds", 240);
 
 if (file_exists(__DIR__ . '/connection_params.php')) {
     require_once __DIR__ . '/connection_params.php';
