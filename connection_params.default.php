@@ -1,9 +1,7 @@
 <?php
-$connectionParams = array(
-    'host' => 'http://<default-server>:8080',
-    'domain' => '<domain>',
-    'project' => '<project>',
-    'username' => '<username>',
-    'password' => '<password>',
-);
+define('qcHost','http://<default-server>:8080');
+define ('qcDomain' ,'<domain>');
+define ('qcProject', '<project>');
+define('qcUsername', '<username>');
+define('qcPassword', '<password>');
 ?>

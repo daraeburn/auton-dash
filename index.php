@@ -4,50 +4,60 @@ require 'qc.php';
 require 'ui.php';
 
  if (isset($_GET['type'])) {
-        $type = $_GET['type'];
-    }else{
-        $type = "";
-    }
-
-$almClient = qcLogin($connectionParams);
-if ($almClient) {
-    $notClosedCollection = new DefectCollection("Not closed", page.'?type="NOTCLOSED"',
-        qcGetDefectsByTagAndState($almClient,'GLA_auto','<>'.doneString));
-    
-    $backlogCollection = new DefectCollection("Backlog",page.'?type="BACKLOG"',
-        qcGetDefectsByTagAndState($almClient,'GLA_auto',newString));
-
-    $inProgressCollection= new DefectCollection("In Progress", page.'?type="INPROGRESS"',
-        qcGetDefectsByTagAndState($almClient,'GLA_auto',openString));
-
-    $waitingOnDevCollection = new DefectCollection("With Reporter", page.'?type="WITHREPORTER"',
-        qcGetDefectsByTagAndState($almClient,"GLA_auto",waitingConfirmationString));
-
-    $closedThisWeekCollection = new DefectCollection("CLOSED this week", page.'?type="CLOSEDTHISWEEK"',
-        qcDoneDefectsThisWeekByTag($almClient,"GLA_auto", doneString));
-
-    switch ($type) {
-        case "CLOSEDTHISWEEK":
-            $defectsToDisplay = $closedThisWeekCollection->defects;
-            break;
-        case "BACKLOG":
-            $defectsToDisplay = $backlogCollection->defects;
-            break;
-        case "INPROGRESS":
-            $defectsToDisplay = $inProgressCollection->defects;
-            break;
-        case "WITHREPORTER":
-            $defectsToDisplay = $waitingOnDevCollection->defects;
-            break;
-        default:
-            $defectsToDisplay = $notClosedCollection->defects;
-    }
+    $type = $_GET['type'];
+}else{
+    $type = "";
 }
-head(pageRefreshSeconds, page);
-drawTitle();
-drawCountBoxes($backlogCollection->getCount(), $inProgressCollection->getCount(),
-    $waitingOnDevCollection->getCount(), $closedThisWeekCollection->getCount());
-qcDefectsTable($defectsToDisplay);
-qcLogout($almClient);
-drawFooter();
+
+$notClosedCollection = DefectCollection::CreateCollectionByTagAndState("Not closed", page.'?type=NOTCLOSED',
+    'GLA_auto','<>'.doneString);
+
+$backlogCollection = DefectCollection::CreateCollectionByTagAndState("Backlog",page.'?type=BACKLOG',
+    'GLA_auto',newString);
+
+$inProgressCollection = DefectCollection::CreateCollectionByTagAndState("In Progress", page.'?type=INPROGRESS',
+    'GLA_auto',openString);
+
+$waitingOnDevCollection = DefectCollection::CreateCollectionByTagAndState("With Reporter", page.'?type=WITHREPORTER',
+    "GLA_auto",waitingConfirmationString);
+
+$closedThisWeekCollection = DefectCollection::CreateCollectionThisWeekByTag("CLOSED this week", page.'?type=CLOSEDTHISWEEK',
+    "GLA_auto", doneString);
+
+$closedThreeWeeksCollection = DefectCollection::CreateCollectionThreeWeeksByTag("CLOSED this sprint", page.'?type=CLOSEDTHREEWEEKS',
+    "GLA_auto", doneString);
+
+$collections = array(
+    $notClosedCollection,
+    $backlogCollection,
+    $inProgressCollection,
+    $waitingOnDevCollection,
+    $closedThisWeekCollection,
+    $closedThreeWeeksCollection,
+);
+
+UIhead();
+UIdrawTitle();
+UIdrawBoxes($collections);
+switch ($type) {
+    case "CLOSEDTHISWEEK":
+        echo $closedThisWeekCollection->getHTMLTable();
+        break;
+    case "BACKLOG":
+        echo $backlogCollection->getHTMLTable();
+        break;
+    case "INPROGRESS":
+        echo $inProgressCollection->getHTMLTable();
+        break;
+    case "WITHREPORTER":
+        echo $waitingOnDevCollection->getHTMLTable();
+        break;
+    case "CLOSEDTHREEWEEKS":
+        echo $closedThreeWeeksCollection->getHTMLTable();
+        break;
+    default:
+        echo $notClosedCollection->getHTMLTable();
+}
+DefectCollection::Logout();
+UIdrawFooter();
 ?>
