@@ -19,16 +19,32 @@ class DefectCollection{
         return self::$almClient;
     }
 
-    public function __construct($title, $link, $defects,$color) {
+    function __construct() 
+    { 
+        $a = func_get_args(); 
+        $i = func_num_args(); 
+        if (method_exists($this,$f='__construct'.$i)) { 
+            call_user_func_array(array($this,$f),$a); 
+        } 
+    } 
+
+    public function __construct4($title, $link, $defects,$color) {
         $this->title = $title;
         $this->link = $link;
         $this->defects = $defects;
         $this->color = $color;
     }
 
+    public function __construct6($title, $link, $color, $col1, $col2, $col3) {
+        $this->title = $title;
+        $this->link = $link;
+        $this->defects = array_merge($col1, $col2, $col3);
+        $this->color = $color;
+    }
+
     public function getHTMLTable() {
         $html="<h2>".$this->title."</h2>";
-        $html .= "<table id='defects' class='table table-striped table-bordered table-hover'>
+        $html .= "<table id='defects' class='table table-striped table-bordered table-hover table-sm'>
         <thead>
         <tr>
         <th>Id</th>
@@ -89,23 +105,37 @@ class DefectCollection{
         return $collection;
     }
 
-    static function CreateCollectionThisWeekByTag($title, $link, $tag, $doneString) {
+    static function CreateCollectionCompleteFromDateByTag($title, $link, $tag, $fromDate) {
         $almClient = self::GetAlmClient();
         $collection = new DefectCollection($title, $link, $almClient->getManager()->getBy(AlmEntityManager::ENTITY_TYPE_DEFECT, array(
             'user-89' => $tag,
-            'user-23' => $doneString,
-            'user-24' => ">=".date('Y-m-d', strtotime('Monday this week')),
+            'user-23' => doneString,
+            'user-24' => ">=".date(dateformat, $fromDate),
         )),"success");
         return $collection;
     }
 
-    static function CreateCollectionThreeWeeksByTag($title, $link, $tag, $doneString) {
+    static function CreateCollectionDevReqClosedByTag($title, $link, $tag) {
         $almClient = self::GetAlmClient();
         $collection = new DefectCollection($title, $link, $almClient->getManager()->getBy(AlmEntityManager::ENTITY_TYPE_DEFECT, array(
             'user-89' => $tag,
-            'user-23' => $doneString,
-            'user-24' => ">=".date('Y-m-d', strtotime(sprintstart)),
+            'user-23' => devReqClosedString,
         )),"success");
+        return $collection;
+    }
+
+    static function CreateCollectionReadyForTestByTag($title, $link, $tag) {
+        $almClient = self::GetAlmClient();
+        $collection = new DefectCollection($title, $link, $almClient->getManager()->getBy(AlmEntityManager::ENTITY_TYPE_DEFECT, array(
+            'user-89' => $tag,
+            'user-23' => readyForTestString,
+        )),"success");
+        return $collection;
+    }
+
+    public static function CreateCollectionFromExisting($title, $link, $color, $col1, $col2, $col3) {
+        $almClient = self::GetAlmClient();
+        $collection = new DefectCollection($title, $link, $color, $col1, $col2, $col3);
         return $collection;
     }
 
