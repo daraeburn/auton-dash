@@ -11,41 +11,41 @@ require 'ui.php';
 
 $notClosedCollection = DefectCollection::CreateCollectionByTagAndState("Not closed",
     page.'?type=NOTCLOSED',
-    'GLA_auto','<>'.doneString);
+    tag,'<>'.doneString);
 
 $backlogCollection = DefectCollection::CreateCollectionByTagAndState("Backlog",
     page.'?type=BACKLOG',
-    'GLA_auto',newString);
+    tag,newString);
 
-$devreqinfoCollection = DefectCollection::CreateCollectionByTagAndState("Dev info req",
+$devreqinfoCollection = DefectCollection::CreateCollectionByTagAndState("Dev-req-info",
     page.'?type=DEVREQINFO',
-    'GLA_auto',devReqInfoString);
+    tag,devReqInfoString);
 
-$inProgressCollection = DefectCollection::CreateCollectionByTagAndState("In Progress",
+$inProgressCollection = DefectCollection::CreateCollectionByTagAndState("Open / In Progress",
     page.'?type=INPROGRESS',
-    'GLA_auto',openString);
+    tag,openString);
 
 $inTestCollection = DefectCollection::CreateCollectionByTagAndState("Dev Complete - In Test",
     page.'?type=WITHREPORTER',
-    "GLA_auto",readyForTestString);
+    tag,readyForTestString);
 
 $closedThisWeekCollection = DefectCollection::CreateCollectionCompleteFromDateByTag("CLOSED this week",
     page.'?type=CLOSEDTHISWEEK',
-    "GLA_auto",
+    tag,
     strtotime('Monday this week'));
 
 $closedThisSprintCollection = DefectCollection::CreateCollectionCompleteFromDateByTag("CLOSED this sprint",
     page.'?type=CLOSEDTHISSPRINT',
-    "GLA_auto",
+    tag,
     strtotime(sprintstart));
 
 $devReqClosedThisSprintCollection = DefectCollection::CreateCollectionDevReqClosedByTag("Dev-req-closed this sprint",
     page.'?type=DEVREQCLOSEDSPRINT',
-    "GLA_auto");
+    tag);
 
-$readyForTestCollection =  DefectCollection::CreateCollectionReadyForTestByTag("Ready for Test this sprint",
-    page.'?type=READYFORTESTSPRINT',
-    "GLA_auto");
+$readyForTestCollection =  DefectCollection::CreateCollectionReadyForTestByTag("Ready for Test",
+    page.'?type=READYFORTEST',
+    tag);
 
 $QADoneCollection = DefectCollection::CreateCollectionFromExisting("QA Done this sprint (Closed, dev-req-closed or Ready for test)",
     page.'?type=QADONETHISSPRINT',
@@ -88,7 +88,10 @@ switch ($type) {
         echo $waitingOnDevCollection->getHTMLTable();
         break;
     case "CLOSEDTHISSPRINT":
-        echo $closedThreeWeeksCollection->getHTMLTable();
+        echo $closedThisSprintCollection->getHTMLTable();
+        break;
+    case "READYFORTEST":
+        echo $readyForTestCollection->getHTMLTable();
         break;
     case "QADONETHISSPRINT":
         echo $QADoneCollection->getHTMLTable();
