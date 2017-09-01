@@ -3,11 +3,24 @@
 require 'defects.php';
 require 'ui.php';
 
- if (isset($_GET['type'])) {
+if (isset($_GET['type'])) {
     $type = $_GET['type'];
 }else{
     $type = "";
 }
+
+if (isset($_GET['week_calc_from'])) {
+    $week_calc_from = strtotime($_GET['week_calc_from']);
+}else{
+    $week_calc_from = strtotime('Monday this week');
+}
+
+if (isset($_GET['week_calc_to'])) {
+    $week_calc_to = strtotime($_GET['week_calc_to']);
+}else{
+    $week_calc_to = strtotime('now');
+}
+
 
 $notClosedCollection = DefectCollection::CreateCollectionByTagAndState("Not closed",
     page.'?type=NOTCLOSED',
@@ -29,10 +42,10 @@ $inTestCollection = DefectCollection::CreateCollectionByTagAndState("Dev Complet
     page.'?type=WITHREPORTER',
     tag,readyForTestString);
 
-$closedThisWeekCollection = DefectCollection::CreateCollectionCompleteFromDateByTag("CLOSED this week",
+$closedThisWeekCollection = DefectCollection::CreateCollectionCompleteFromDateByTag("CLOSED since ".date("Y-m-d", $week_calc_from),
     page.'?type=CLOSEDTHISWEEK',
     tag,
-    strtotime('Monday this week'));
+    $week_calc_from);
 
 $closedThisSprintCollection = DefectCollection::CreateCollectionCompleteFromDateByTag("CLOSED this sprint",
     page.'?type=CLOSEDTHISSPRINT',
@@ -59,7 +72,12 @@ $collections = array(
     $devreqinfoCollection,
     $inProgressCollection,
     $readyForTestCollection,
+
+);
+
+$thisPeriodCollections = array(
     $closedThisWeekCollection,
+
 );
 
 $overviewCollections = array(
@@ -71,8 +89,9 @@ $overviewCollections = array(
 UIhead();
 UIdrawTitle();
 UIdrawStatusChart();
-UIdrawBoxes($collections);
-UIdrawBoxes($overviewCollections);
+UIdrawBoxes($collections, "Current count");
+UIdrawBoxes($thisPeriodCollections, "This Period",true);
+UIdrawBoxes($overviewCollections, "This Sprint");
 
 switch ($type) {
     case "CLOSEDTHISWEEK":
