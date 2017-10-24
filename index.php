@@ -34,7 +34,7 @@ $devreqinfoCollection = DefectCollection::CreateCollectionByTagAndState("Dev-req
     page.'?type=DEVREQINFO',
     tag,devReqInfoString);
 
-$inProgressCollection = DefectCollection::CreateCollectionByTagAndState("Open/In Progress",
+$inProgressCollection = DefectCollection::CreateCollectionByTagAndState("In Progress",
     page.'?type=INPROGRESS',
     tag,openString);
 

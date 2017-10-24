@@ -58,8 +58,8 @@ function UIdrawBoxOfCollections($collections, $heading, $showDate=false, $contai
 
 function UIdrawMainTitle() {
     echo '<table style="width: 100%;">
-        <tr><td><h1>Sprint '.sprintnumber.' start - '.sprintstart.'</h1></td>
-        <td class="pull-right"><h1>Auton Dashboard</h1></td></tr>
+        <tr><td><h1>Auton Dashboard</h1></td>
+        <td class="pull-right"><h1>Sprint '.sprintnumber.': start - '.sprintstart.'</h1></td></tr>
         </table>';
 }
 
