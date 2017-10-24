@@ -42,27 +42,46 @@ class DefectCollection{
         $this->color = $color;
     }
 
-    public function getHTMLTable() {
-        $html="<h2>".$this->title."</h2>";
-        $html .= "<table id='defects' class='table table-striped table-bordered table-hover table-sm'>
+    public function getHTMLTable($containerWidth) {
+        $html= '<div class = "col-md-'.$containerWidth.'">
+        <div class = "panel panel-default">
+        <div class="panel-heading">'.$this->title.'</div>
+        <div class="panel-body">
+        <div class = "col-md-12">';
+        $html .= "<table id='defects' class='table table-striped table-bordered table-hover table-sm' size='100%'>
         <thead>
         <tr>
         <th>Id</th>
         <th>Name</th>
         <th>State</th>
         <th>Assign To</th>
+        <th>Created Date</th>
+        <th>Created By</th>
+        <th>Closed date</th>
         </tr>
         </thead>
         <tbody>";
         foreach ($this->defects as $defect) {
             $html .= "<tr>";
-            $html .= "<td>" . $defect->id . "</td>";
+            $html .= "<td><a href='/auton-dash/defectdetail.php?defectid=".$defect->id."'>" . $defect->id . "</td>";
             $html .= "<td>" . $defect->name . "</td>";
             $html .= "<td>" . $defect->getParameter('user-23') . "</td>";
             $html .= "<td>" . $defect->getParameter('user-02') . "</td>";
+            $html .= "<td>" . $defect->getParameter('creation-time') . "</td>";
+            $html .= "<td>" . $defect->getParameter('detected-by') . "</td>";
+            $entityParameters=$defect->getParameters();
+            if (array_key_exists("user-24",$entityParameters))
+                $html .= "<td>".$defect->{'user-24'}."</td>";
+            else
+                $html .= "<td></td>";
         $html .= "</tr>";
         }
         $html .= "</tbody></table>";
+        $html .= "</div>";
+        $html .= "</div>";
+        $html .= "</div>";
+        $html .= "</div>";
+        $html .= "</div>";
         return $html;
     }
 
@@ -89,6 +108,14 @@ class DefectCollection{
         return null;
     }
 
+    static function GetDefectByID($defectid) {
+        $almClient = self::GetAlmClient();
+        $entity = $almClient->getManager()->getOneBy(AlmEntityManager::ENTITY_TYPE_DEFECT, array(
+            'id' => $defectid,
+        ));
+        return $entity;
+    }
+
     static function CreateCollectionByTag($title, $link, $tag) {
         $almClient = self::GetAlmClient();
         $collection = new DefectCollection($title, $link, $almClient->getManager()->getBy(AlmEntityManager::ENTITY_TYPE_DEFECT, array(
@@ -105,12 +132,22 @@ class DefectCollection{
         return $collection;
     }
 
-    static function CreateCollectionCompleteFromDateByTag($title, $link, $tag, $fromDate) {
+    static function CreateCollectionCompleteFromDateByTag($title, $link, $tag, $fromDate, $toDate) {
         $almClient = self::GetAlmClient();
         $collection = new DefectCollection($title, $link, $almClient->getManager()->getBy(AlmEntityManager::ENTITY_TYPE_DEFECT, array(
             'user-89' => $tag,
             'user-23' => doneString,
-            'user-24' => ">=".date(dateformat, $fromDate),
+            'user-24' => ">=".date(dateformat, $fromDate)."%20AND%20<=".date(dateformat, $toDate),
+        )),"success");
+        return $collection;
+    }
+
+    static function CreateCollectionOpenedFromDateByTag($title, $link, $tag, $fromDate, $toDate) {
+        $almClient = self::GetAlmClient();
+        $collection = new DefectCollection($title, $link, $almClient->getManager()->getBy(AlmEntityManager::ENTITY_TYPE_DEFECT, array(
+            'user-89' => $tag,
+//            'user-23' => openString,
+            'creation-time' => ">=".date(dateformat, $fromDate)."%20AND%20<=".date(dateformat, $toDate),
         )),"success");
         return $collection;
     }
@@ -143,5 +180,9 @@ class DefectCollection{
         self::$almClient->getAuthenticator()->logout();
     }
 
+    static function SaveDefect($defect) {
+        $almClient = self::GetAlmClient();
+        $almClient->getManager()->save($defect);
+    }
 }
 ?>

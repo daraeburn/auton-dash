@@ -9,22 +9,22 @@ if (isset($_GET['type'])) {
     $type = "";
 }
 
-if (isset($_GET['week_calc_from'])) {
-    $week_calc_from = strtotime($_GET['week_calc_from']);
+if (isset($_GET['period_calc_from'])) {
+    $period_calc_from = $_GET['period_calc_from'];
 }else{
-    $week_calc_from = strtotime('Monday this week');
+    $period_calc_from = date(dateformat, strtotime('last Tuesday'));
 }
 
-if (isset($_GET['week_calc_to'])) {
-    $week_calc_to = strtotime($_GET['week_calc_to']);
+if (isset($_GET['period_calc_to'])) {
+    $period_calc_to = $_GET['period_calc_to'];
 }else{
-    $week_calc_to = strtotime('now');
+    $period_calc_to = date(dateformat, strtotime('now'));
 }
 
 
-$notClosedCollection = DefectCollection::CreateCollectionByTagAndState("Not closed",
-    page.'?type=NOTCLOSED',
-    tag,'<>'.doneString);
+//$notClosedCollection = DefectCollection::CreateCollectionByTagAndState("Not closed",
+//    page.'?type=NOTCLOSED',
+//    tag,'<>'.doneString);
 
 $backlogCollection = DefectCollection::CreateCollectionByTagAndState("Backlog",
     page.'?type=BACKLOG',
@@ -34,7 +34,7 @@ $devreqinfoCollection = DefectCollection::CreateCollectionByTagAndState("Dev-req
     page.'?type=DEVREQINFO',
     tag,devReqInfoString);
 
-$inProgressCollection = DefectCollection::CreateCollectionByTagAndState("Open / In Progress",
+$inProgressCollection = DefectCollection::CreateCollectionByTagAndState("Open/In Progress",
     page.'?type=INPROGRESS',
     tag,openString);
 
@@ -42,15 +42,24 @@ $inTestCollection = DefectCollection::CreateCollectionByTagAndState("Dev Complet
     page.'?type=WITHREPORTER',
     tag,readyForTestString);
 
-$closedThisWeekCollection = DefectCollection::CreateCollectionCompleteFromDateByTag("CLOSED since ".date("Y-m-d", $week_calc_from),
-    page.'?type=CLOSEDTHISWEEK',
+$closedThisPeriodCollection = DefectCollection::CreateCollectionCompleteFromDateByTag("CLOSED",
+    page.'?type=CLOSEDTHISPERIOD&period_calc_from='.$period_calc_from.'&period_calc_to='.$period_calc_to,
     tag,
-    $week_calc_from);
+    strtotime($period_calc_from),
+    strtotime($period_calc_to));
 
-$closedThisSprintCollection = DefectCollection::CreateCollectionCompleteFromDateByTag("CLOSED this sprint",
+$openedThisPeriodCollection = DefectCollection::CreateCollectionOpenedFromDateByTag("OPENED",
+    page.'?type=OPENEDTHISPERIOD&period_calc_from='.$period_calc_from.'&period_calc_to='.$period_calc_to,
+    tag,
+    strtotime($period_calc_from),
+    strtotime($period_calc_to));
+
+
+$closedThisSprintCollection = DefectCollection::CreateCollectionCompleteFromDateByTag("CLOSED",
     page.'?type=CLOSEDTHISSPRINT',
     tag,
-    strtotime(sprintstart));
+    strtotime(sprintstart),
+    strtotime('now'));
 
 $devReqClosedThisSprintCollection = DefectCollection::CreateCollectionDevReqClosedByTag("Dev-req-closed this sprint",
     page.'?type=DEVREQCLOSEDSPRINT',
@@ -60,7 +69,7 @@ $readyForTestCollection =  DefectCollection::CreateCollectionReadyForTestByTag("
     page.'?type=READYFORTEST',
     tag);
 
-$QADoneCollection = DefectCollection::CreateCollectionFromExisting("QA Done this sprint (Closed, dev-req-closed or Ready for test)",
+$QADoneCollection = DefectCollection::CreateCollectionFromExisting("QA Done",
     page.'?type=QADONETHISSPRINT',
     "success",
     $devReqClosedThisSprintCollection->defects,
@@ -72,52 +81,58 @@ $collections = array(
     $devreqinfoCollection,
     $inProgressCollection,
     $readyForTestCollection,
-
 );
 
 $thisPeriodCollections = array(
-    $closedThisWeekCollection,
-
+    $openedThisPeriodCollection,
+    $closedThisPeriodCollection,
 );
 
 $overviewCollections = array(
-
     $closedThisSprintCollection,
     $QADoneCollection,
 );
 
-UIhead();
-UIdrawTitle();
-UIdrawStatusChart();
-UIdrawBoxes($collections, "Current count");
-UIdrawBoxes($thisPeriodCollections, "This Period",true);
-UIdrawBoxes($overviewCollections, "This Sprint");
+UIMainhead();
+UIdrawMainTitle();
+echo '<div class="row">';
+UIdrawStatusChart(3);
+UIdrawBoxOfCollections($collections, "Current count",false,6);
+UIdrawBoxOfCollections($overviewCollections, "This Sprint",false,3);
+echo '</div>';
+echo '<div class="row">';
+UIdrawBoxOfCollections($thisPeriodCollections, "This Period",true,4);
 
+$tableWidth=8;
 switch ($type) {
-    case "CLOSEDTHISWEEK":
-        echo $closedThisWeekCollection->getHTMLTable();
+    case "CLOSEDTHISPERIOD":
+        echo $closedThisPeriodCollection->getHTMLTable($tableWidth);
+        break;
+    case "OPENEDTHISPERIOD":
+        echo $openedThisPeriodCollection->getHTMLTable($tableWidth);
         break;
     case "BACKLOG":
-        echo $backlogCollection->getHTMLTable();
+        echo $backlogCollection->getHTMLTable($tableWidth6);
         break;
     case "INPROGRESS":
-        echo $inProgressCollection->getHTMLTable();
+        echo $inProgressCollection->getHTMLTable($tableWidth);
         break;
     case "WITHREPORTER":
-        echo $waitingOnDevCollection->getHTMLTable();
+        echo $waitingOnDevCollection->getHTMLTable($tableWidth);
         break;
     case "CLOSEDTHISSPRINT":
-        echo $closedThisSprintCollection->getHTMLTable();
+        echo $closedThisSprintCollection->getHTMLTable($tableWidth6);
         break;
     case "READYFORTEST":
-        echo $readyForTestCollection->getHTMLTable();
+        echo $readyForTestCollection->getHTMLTable($tableWidth);
         break;
     case "QADONETHISSPRINT":
-        echo $QADoneCollection->getHTMLTable();
+        echo $QADoneCollection->getHTMLTable($tableWidth);
         break;
     default:
         //echo $notClosedCollection->getHTMLTable();
 }
+echo '</div>';
 DefectCollection::Logout();
 
 //calculate the total
@@ -127,10 +142,12 @@ $inProgressCount=$inProgressCollection->getCount();
 $readyForTestCount=$readyForTestCollection->getCount();
 $total = $backlogCount+$devreqinfoCount+$inProgressCount+$readyForTestCount;
 
-UIdrawFooter(
+UIdrawMainFooter(
     ($backlogCount/$total)*100,
     ($devreqinfoCount/$total)*100,
     ($inProgressCount/$total)*100,
-    ($readyForTestCount/$total)*100
+    ($readyForTestCount/$total)*100,
+    $period_calc_from,
+    $period_calc_to
     );
 ?>

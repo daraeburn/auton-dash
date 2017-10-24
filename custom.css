@@ -5,3 +5,11 @@
 .keep-on-line {
     white-space: nowrap;
 }
+
+@media (min-width: 1600px) {
+    #mainContainer {
+      width: 1570px;
+    }
+  }
+
+  .top-buffer { margin-top:20px; }

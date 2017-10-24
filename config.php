@@ -10,11 +10,10 @@ define ("devReqInfoString", "dev-req-info");
 define ("newString", "New");
 define ("openString", "Open");
 define ("readyForTestString", "'Ready%20for%20Test'");
-define ("pageRefreshSeconds", 240);
-define ("sprintnumber", "4");
-define ("sprintstart", "2017-08-23");
+define ("sprintnumber", "6");
+define ("sprintstart", "2017-10-04");
 define ("dateformat", "Y-m-d");
-define ("tag", "*GLA_auto*");
+define ("tag", "*GLA_auto*%20OR%20*AUTON*");
 
 if (file_exists(__DIR__ . '/connection_params.php')) {
     require_once __DIR__ . '/connection_params.php';
