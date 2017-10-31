@@ -10,8 +10,8 @@ define ("devReqInfoString", "dev-req-info");
 define ("newString", "New");
 define ("openString", "Open");
 define ("readyForTestString", "'Ready%20for%20Test'");
-define ("sprintnumber", "6");
-define ("sprintstart", "2017-10-04");
+define ("sprintnumber", "7");
+define ("sprintstart", "2017-10-25");
 define ("dateformat", "Y-m-d");
 define ("tag", "*GLA_auto*%20OR%20*AUTON*");
 

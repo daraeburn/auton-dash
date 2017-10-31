@@ -1,7 +1,15 @@
 <?php
 
 function UIdrawBoxOfCollections($collections, $heading, $showDate=false, $containerWidth) {
-    $width = intdiv(12,count($collections));
+    // if there are more than four boxes we should split them into rows of 4
+    $collectionCount = count($collections);
+    if ($collectionCount>=4){
+        $width = 3;
+    }
+    else {
+        $width = intdiv(12,$collectionCount);
+    }
+    
     
     $html= '<div class = "col-md-'.$containerWidth.'">
     <div class = "panel panel-default">
@@ -34,7 +42,7 @@ function UIdrawBoxOfCollections($collections, $heading, $showDate=false, $contai
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary col-md-2" id="refresh" name="refresh">Refresh</button>
+            <button type="submit" class="btn btn-primary col-md-4" id="refresh" name="refresh">Refresh</button>
             </form>
         </div>';
     }
@@ -75,12 +83,12 @@ function UIMainHead() {
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"></script>
+       
     
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <!-- Optional Bootstrap theme -->
     <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" integrity="sha384-zF4BRsG/fLiTGfR9QL82DrilZxrwgY/+du4p/c7J72zZj+FLYq4zY00RylP9ZjiT" crossorigin="anonymous">
-    <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css"></style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="custom.css">
     </head>
 <body>
@@ -127,7 +135,10 @@ function UIdrawMainFooter($backlog,$devreqinfo,$inprogress,$readyForTest,$period
                 $("#datetimepickerFrom").data("DateTimePicker").maxDate(e.date);
             });
 
-            $("#defects").dataTable();';
+            $("#defects").DataTable({
+                "scrollX": true,
+                "pageLength": 5
+            });';
             
             echo 'var chart = new CanvasJS.Chart("chartContainer",
                 {

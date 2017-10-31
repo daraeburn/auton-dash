@@ -48,7 +48,7 @@ class DefectCollection{
         <div class="panel-heading">'.$this->title.'</div>
         <div class="panel-body">
         <div class = "col-md-12">';
-        $html .= "<table id='defects' class='table table-striped table-bordered table-hover table-sm' size='100%'>
+        $html .= "<table id='defects' class='table compact table-striped table-bordered table-hover table-sm' size='100%'>
         <thead>
         <tr>
         <th>Id</th>

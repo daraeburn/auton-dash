@@ -34,6 +34,10 @@ $devreqinfoCollection = DefectCollection::CreateCollectionByTagAndState("Dev-req
     page.'?type=DEVREQINFO',
     tag,devReqInfoString);
 
+$devreqclosedCollection = DefectCollection::CreateCollectionByTagAndState("Dev-req-closed",
+    page.'?type=DEVREQCLOSED',
+    tag,devReqClosedString);
+
 $inProgressCollection = DefectCollection::CreateCollectionByTagAndState("In Progress",
     page.'?type=INPROGRESS',
     tag,openString);
@@ -80,6 +84,7 @@ $collections = array(
     $backlogCollection,
     $devreqinfoCollection,
     $inProgressCollection,
+    $devreqclosedCollection,
     $readyForTestCollection,
 );
 
@@ -101,9 +106,9 @@ UIdrawBoxOfCollections($collections, "Current count",false,6);
 UIdrawBoxOfCollections($overviewCollections, "This Sprint",false,3);
 echo '</div>';
 echo '<div class="row">';
-UIdrawBoxOfCollections($thisPeriodCollections, "This Period",true,4);
+UIdrawBoxOfCollections($thisPeriodCollections, "This Period",true,3);
 
-$tableWidth=8;
+$tableWidth=9;
 switch ($type) {
     case "CLOSEDTHISPERIOD":
         echo $closedThisPeriodCollection->getHTMLTable($tableWidth);
@@ -128,6 +133,9 @@ switch ($type) {
         break;
     case "QADONETHISSPRINT":
         echo $QADoneCollection->getHTMLTable($tableWidth);
+        break;
+    case "DEVREQCLOSED":
+        echo $devreqclosedCollection->getHTMLTable($tableWidth);
         break;
     default:
         //echo $notClosedCollection->getHTMLTable();
