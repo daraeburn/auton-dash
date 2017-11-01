@@ -42,7 +42,7 @@ function UIdrawBoxOfCollections($collections, $heading, $showDate=false, $contai
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary col-md-4" id="refresh" name="refresh">Refresh</button>
+            <button type="button" class="btn btn-primary col-md-4" id="refreshDates" name="refreshDates" onclick="refreshClicked()">Refresh</button>
             </form>
         </div>';
     }
@@ -99,22 +99,22 @@ function UIdrawMainFooter($backlog,$devreqinfo,$inprogress,$readyForTest,$period
     echo'';
     echo '<script>
 
+        function refreshClicked() {
+            var currentRoot = window.location.href.split("?")[0] 
+            var el = document.getElementById("refreshDate");
+        
+            var newUrl = currentRoot+
+            "?period_calc_from="+
+            $("#datetimepickerFrom").data("DateTimePicker").date().format("YYYY-MM-DD")+
+            "&period_calc_to="+
+            $("#datetimepickerTo").data("DateTimePicker").date().format("YYYY-MM-DD")
+            window.location.replace(newUrl);
+            return false;
+        };
+
         $(document).ready(function(){
             var dateFrom= new Date("'.$period_calc_from.'");
             var dateTo= new Date("'.$period_calc_to.'");
-
-            var currentRoot = window.location.href.split("?")[0] 
-
-            var el = document.getElementById("refresh");
-            
-            el.addEventListener("click", function() {
-                window.location.href = currentRoot+
-                    "?period_calc_from="+
-                    $("#datetimepickerFrom").data("DateTimePicker").date().format("YYYY-MM-DD")+
-                    "&period_calc_to="+
-                    $("#datetimepickerTo").data("DateTimePicker").date().format("YYYY-MM-DD");
-                return false;
-            });
             
             $("#datetimepickerFrom").datetimepicker({
                 format: "YYYY-MM-DD",
