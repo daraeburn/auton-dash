@@ -73,4 +73,78 @@ echo '<form>
 
 UIdrawDetailFooter($defectid);
 DefectCollection::Logout();
+
+function UIDefectHead() {
+    echo '<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Auton Defect detail</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/2.18.1/moment.min.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"></script>
+    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/wysihtml5/0.3.0/wysihtml5.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-wysiwyg/0.3.3/bootstrap3-wysihtml5.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-wysiwyg/0.3.3/locales/bootstrap-wysihtml5.en-US.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-wysiwyg/0.3.3/bootstrap3-wysihtml5.css"></style>
+    
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.css"></style>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="custom.css">
+    <!-- Optional Bootstrap theme -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" integrity="sha384-zF4BRsG/fLiTGfR9QL82DrilZxrwgY/+du4p/c7J72zZj+FLYq4zY00RylP9ZjiT" crossorigin="anonymous">
+    <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css"></style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+
+    </head>
+<body>
+    <div class="container">';
+}
+
+function UIdrawDefectTitle($defect) {
+    echo '<table style="width: 100%;">
+        <tr><td><h1>Defect detail - '.$defect->id.'</h1></td>
+        <td class="pull-right"><h1>Auton Details</h1></td></tr>
+        </table>';
+}
+
+function UIdrawDetailFooter($defectid){
+    echo'';
+    echo '<script>
+
+    function goBack() {
+        window.history.back();
+    }
+
+    $(document).ready(function(){
+
+        $("#description").wysihtml5();
+
+        $(".button").click(function(){
+            var clickBtnValue = $(this).val();
+            var ajaxurl = "ajax.php",
+            data =  {"action": clickBtnValue,
+                "defectid": '.$defectid.',
+                "createdDate": document.getElementById("dCreatedDate").value,
+                "name": document.getElementById("summary").value};
+            $.post(ajaxurl, data, function (response) {
+                // Response div goes here.
+                alert("action performed successfully");
+            });
+        });
+    });
+    </script>
+</div>
+</body>
+</html>';
+}
+
 ?>
